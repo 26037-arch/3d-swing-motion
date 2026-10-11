@@ -1,0 +1,13 @@
+{
+  "file": "C:\\Users\\junwoo\\Documents\\Codex\\2026-10-10\\new-chat-2\\outputs\\swing-3d-clockwise-motion.mp4",
+  "frames": 859,
+  "duration_s": 28.633333333333333,
+  "arrival_s": 27.113402542984215,
+  "bytes": 7133341,
+  "screen_signed_area_range": [
+    -0.010296916615541506,
+    -0.0003345093101443252
+  ],
+  "checked_arm_camera_poses": 6896,
+  "clockwise_screen_order": "hand -> elbow -> shoulder"
+}

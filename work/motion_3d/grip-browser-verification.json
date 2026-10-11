@@ -1,0 +1,62 @@
+{
+  "cases": {
+    "rod-ideal": {
+      "samples": 82,
+      "maxLengthError": 4.440892098500626e-16,
+      "maxGripXError": 0.0000018167481240505268,
+      "maxGripYError": 0,
+      "maxLowestError": 2.220446049250313e-16,
+      "angleRange": [
+        69.27844453684044,
+        139.6444954414227
+      ],
+      "end": 27.1134,
+      "theta": 180
+    },
+    "rod-with-resistance": {
+      "samples": 82,
+      "maxLengthError": 6.661338147750939e-16,
+      "maxGripXError": 0.0000017360859881909718,
+      "maxGripYError": 0,
+      "maxLowestError": 6.661338147750939e-16,
+      "angleRange": [
+        69.27855860328829,
+        139.65809177882434
+      ],
+      "end": 39.5424,
+      "theta": 179.9993
+    },
+    "rope-ideal": {
+      "samples": 82,
+      "maxLengthError": 3.885780586188048e-16,
+      "maxGripXError": 2.220446049250313e-16,
+      "maxGripYError": 0,
+      "maxLowestError": 8.881784197001252e-16,
+      "angleRange": [
+        69.27845111904381,
+        140.67996401308304
+      ],
+      "end": 120,
+      "theta": 106.483
+    },
+    "rope-with-resistance": {
+      "samples": 82,
+      "maxLengthError": 3.885780586188048e-16,
+      "maxGripXError": 2.220446049250313e-16,
+      "maxGripYError": 0,
+      "maxLowestError": 4.440892098500626e-16,
+      "angleRange": [
+        69.27808217821807,
+        140.18473396153877
+      ],
+      "end": 120,
+      "theta": 98.756
+    }
+  },
+  "overflow": {
+    "width": 328,
+    "scroll": 328,
+    "canvas": 328
+  },
+  "errors": []
+}

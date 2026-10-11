@@ -1,0 +1,122 @@
+{
+  "parameters": {
+    "height_m": 1.9,
+    "human_mass_kg": 70.0,
+    "pivot_height_m": 2.5,
+    "length_m": 2.2,
+    "torso_length_m": 0.9524050632911393,
+    "thigh_length_m": 0.47259493670886077,
+    "shin_length_m": 0.47500000000000003,
+    "torso_mass_kg": 43.82,
+    "thigh_mass_kg": 17.22,
+    "shin_mass_kg": 8.96,
+    "a_m": 0.11862132911392406,
+    "b_m": 0.35397360759493673,
+    "initial_theta_deg": -31.012392179570508,
+    "foot_radius_m": 0.025,
+    "suspension_mass_kg": 1.0,
+    "seat_mass_kg": 3.0,
+    "ground": true,
+    "timestep_s": 0.0005,
+    "rope": false
+  },
+  "target_reached": true,
+  "time_s": 25.6732917023242,
+  "failure_reason": "",
+  "simulation_end_time_s": 25.673499999985516,
+  "max_angle_deg": 180.00295541659875,
+  "max_hip_torque_Nm": 800.0,
+  "max_knee_torque_Nm": 371.6705430864021,
+  "max_hip_speed_rad_s": 6.76897614132866,
+  "max_knee_speed_rad_s": 6.858947972129404,
+  "max_com_speed_m_s": 8.373082885426014,
+  "max_pivot_reaction_N": 3234.434769159343,
+  "max_abs_power_W": 4451.652552033,
+  "lowest_foot_m": 0.0007902111030920755,
+  "work_J": 2659.29098233138,
+  "positive_work_J": 4713.061797578167,
+  "loss_J": 0.0,
+  "constraint_work_J": -18.541817943828825,
+  "max_energy_residual_J": 4.47039887631265,
+  "foot_clearance_controller_fraction": 0.047909322842619825,
+  "rope_first_slack_s": null,
+  "max_rope_tension_N": 0.0,
+  "rope_stiffness_N_m": null,
+  "rope_damping_Ns_m": null,
+  "min_seat_radius_m": 2.2,
+  "max_seat_radius_m": 2.2,
+  "first_compression": {
+    "time_s": 0.07550000000000005,
+    "theta_deg": -30.74153579056311,
+    "radial_reaction_N": -10.567711264519872
+  },
+  "peaks": [
+    [
+      0.16200000000000012,
+      -0.5308046394961073
+    ],
+    [
+      2.0514999999998524,
+      0.7717523393869178
+    ],
+    [
+      3.580500000000363,
+      -0.7667934684429376
+    ],
+    [
+      5.189999999999843,
+      0.928395003174399
+    ],
+    [
+      6.7609999999989725,
+      -0.9402966613973133
+    ],
+    [
+      8.40449999999878,
+      1.119814171120481
+    ],
+    [
+      10.025500000000761,
+      -1.1508294615200563
+    ],
+    [
+      11.731500000002846,
+      1.3632697322312968
+    ],
+    [
+      13.42800000000492,
+      -1.4242712649274696
+    ],
+    [
+      15.25300000000715,
+      1.7031012110733812
+    ],
+    [
+      17.097500000005503,
+      -1.810936344087957
+    ],
+    [
+      19.21400000000057,
+      2.2658658684216126
+    ],
+    [
+      21.516999999995203,
+      -2.4377677175109653
+    ]
+  ],
+  "controller": {
+    "torso_amplitude_deg": 59.99999999999999,
+    "torso_center_deg": 14.999999999999998,
+    "leg_amplitude_deg": 10.0,
+    "leg_center_deg": 75.0,
+    "phase_slope": 0.5,
+    "drag_k": 0.0,
+    "dry_friction_Nm": 0.0,
+    "hip_max_Nm": 800.0,
+    "knee_max_Nm": 400.0,
+    "vmax": [
+      12.0,
+      12.0
+    ]
+  }
+}

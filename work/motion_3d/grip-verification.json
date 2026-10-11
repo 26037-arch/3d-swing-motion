@@ -1,0 +1,63 @@
+{
+  "rod-ideal": {
+    "frames": 544,
+    "max_arm_length_error_m": 4.996003610813204e-16,
+    "max_hand_grip_error_m": 0.0,
+    "max_lowest_elbow_error_m": 4.440892098500626e-16,
+    "elbow_interior_angle_deg": [
+      69.27809441143853,
+      140.5855566084524
+    ],
+    "shoulder_hand_distance_m": [
+      0.3755077315228351,
+      0.621379113724
+    ]
+  },
+  "rod-with-resistance": {
+    "frames": 792,
+    "max_arm_length_error_m": 7.771561172376096e-16,
+    "max_hand_grip_error_m": 0.0,
+    "max_lowest_elbow_error_m": 8.881784197001252e-16,
+    "elbow_interior_angle_deg": [
+      69.27798926033724,
+      140.5480104719144
+    ],
+    "shoulder_hand_distance_m": [
+      0.3755072341794202,
+      0.6213062290789504
+    ]
+  },
+  "rope-ideal": {
+    "frames": 2401,
+    "max_arm_length_error_m": 8.326672684688674e-16,
+    "max_hand_grip_error_m": 0.0,
+    "max_lowest_elbow_error_m": 4.440892098500626e-16,
+    "elbow_interior_angle_deg": [
+      69.2779892979714,
+      140.7355516466601
+    ],
+    "shoulder_hand_distance_m": [
+      0.3755072343574223,
+      0.6216696195589205
+    ]
+  },
+  "rope-with-resistance": {
+    "frames": 2401,
+    "max_arm_length_error_m": 5.551115123125783e-16,
+    "max_hand_grip_error_m": 0.0,
+    "max_lowest_elbow_error_m": 4.440892098500626e-16,
+    "elbow_interior_angle_deg": [
+      69.27798950084,
+      140.57617184161154
+    ],
+    "shoulder_hand_distance_m": [
+      0.3755072353169499,
+      0.6213609022389444
+    ]
+  },
+  "rendered_geometry_max_error_m": 9.159339953157541e-16,
+  "arm_lengths_m": [
+    0.32,
+    0.34
+  ]
+}

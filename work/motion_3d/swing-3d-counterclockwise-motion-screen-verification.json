@@ -1,0 +1,14 @@
+{
+  "file": "C:\\Users\\junwoo\\Documents\\Codex\\2026-10-10\\new-chat-2\\outputs\\swing-3d-counterclockwise-motion.mp4",
+  "frames": 859,
+  "duration_s": 28.633333333333333,
+  "arrival_s": 27.113402542984215,
+  "bytes": 7040612,
+  "screen_signed_area_range": [
+    0.0003330218301617006,
+    0.01024752187067663
+  ],
+  "checked_arm_camera_poses": 6896,
+  "bend_rule": "counterclockwise",
+  "screen_order": "hand -> elbow -> shoulder"
+}

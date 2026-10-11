@@ -1,0 +1,7 @@
+{
+  "passive_10s_max_energy_error_J": 7.1799864241428395,
+  "ideal_step_difference_s": 0.003803074400998696,
+  "air_step_difference_s": 0.016324178038956916,
+  "passive_10s_RK4_max_energy_error_J": 2.911406227212865e-09,
+  "passive_10s_initial_energy_J": 582.1183466513502
+}

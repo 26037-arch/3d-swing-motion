@@ -1,0 +1,238 @@
+<div id="swing-motion-3d">
+  <style>
+    #swing-motion-3d .scene { width:100%; aspect-ratio: 1.45; min-height:260px; max-height:530px; position:relative; touch-action:none; }
+    #swing-motion-3d .scene canvas { display:block; width:100%; height:100%; }
+    #swing-motion-3d .scene-note { position:absolute; left:0; bottom:0; pointer-events:none; }
+    #swing-motion-3d .time-row { display:flex; flex-wrap:wrap; gap:1rem; align-items:center; justify-content:space-between; }
+    #swing-motion-3d .legend { display:flex; gap:1rem; flex-wrap:wrap; }
+    #swing-motion-3d .swatch { display:inline-block; width:.7em; height:.7em; border-radius:50%; margin-right:.35em; }
+    #swing-motion-3d .time-slider { width:100%; }
+    #swing-motion-3d .scene-warning { padding:1rem 0; }
+    @media(max-width:450px) { #swing-motion-3d .scene { aspect-ratio:1; } }
+  </style>
+  <h3>그네 몸동작 · 3D 재생</h3>
+  <div class="viz-controls">
+    <label class="form-label">조건
+      <select class="form-select" data-control="case">
+        <option value="rod-ideal">봉 · 저항 없음</option>
+        <option value="rod-with-resistance">봉 · 저항 포함</option>
+        <option value="rope-ideal">줄 · 외부 저항 없음</option>
+        <option value="rope-with-resistance">줄 · 외부 저항 포함</option>
+      </select>
+    </label>
+    <label class="form-label">재생 속도
+      <select class="form-select" data-control="speed">
+        <option value="0.25">0.25배</option><option value="0.5">0.5배</option>
+        <option value="1" selected>1배</option><option value="2">2배</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" type="button" data-control="play">재생</button>
+    <button class="btn" type="button" data-control="start">처음으로</button>
+    <button class="btn" type="button" data-control="view">측면 보기</button>
+  </div>
+  <div class="scene cursor-interaction" role="img" aria-label="허리 높이의 봉을 잡고 팔꿈치를 아래로 굽힌 3차원 그네. 어깨 움직임에 따라 팔 각도가 변하며 드래그로 시점을 회전할 수 있습니다.">
+    <span class="scene-note text-small text-muted">드래그: 시점 회전 · 스크롤: 확대</span>
+  </div>
+  <div class="scene-warning text-destructive" hidden role="alert">3D 화면을 표시할 수 없습니다.</div>
+  <div class="time-row tabular-nums">
+    <label class="form-label" for="swing-motion-time">시간 <output data-value="time">0.00</output> / <span data-value="end">27.11</span> s</label>
+    <span>θ <output data-value="angle">-28.4</output>° · 질량중심 속력 <output data-value="velocity">0.00</output> m/s</span>
+  </div>
+  <input class="form-range time-slider" id="swing-motion-time" data-control="time" type="range" min="0" max="27.1134" step="any" value="0" aria-label="모션 재생 시각">
+  <div class="time-row text-small">
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--viz-series-1)"></span>상체</span>
+      <span><span class="swatch" style="background:var(--viz-series-2)"></span>다리</span>
+      <span><span class="swatch" style="background:var(--viz-series-3)"></span>전체 질량중심</span>
+    </div>
+    <span data-value="status" aria-live="polite">θ=180° 도달: 27.1 s</span>
+  </div>
+  <script data-library="three">__THREE_LIBRARY__</script>
+  <script type="application/json" data-motion="frames">__MOTION_DATA__</script>
+  <script>
+  (() => {
+    const root=document.getElementById('swing-motion-3d');
+    const qs=selector=>root.querySelector(selector);
+    const ui={case:qs('[data-control="case"]'),speed:qs('[data-control="speed"]'),
+      play:qs('[data-control="play"]'),start:qs('[data-control="start"]'),view:qs('[data-control="view"]'),
+      time:qs('[data-control="time"]'),clock:qs('[data-value="time"]'),end:qs('[data-value="end"]'),
+      angle:qs('[data-value="angle"]'),v:qs('[data-value="velocity"]'),status:qs('[data-value="status"]')};
+    const cases=JSON.parse(qs('[data-motion="frames"]').textContent);
+    const host=qs('.scene');
+    let selected='rod-ideal', time=0, speed=1, playing=false, raf=0, lastStamp=0;
+    let azimuth=.28, elevation=.16, distance=8.7;
+    const themeColor=(name)=>{
+      const probe=document.createElement('span');probe.style.color=`var(${name})`;root.appendChild(probe);
+      const value=getComputedStyle(probe).color;probe.remove();return new THREE.Color(value);
+    };
+    let renderer;
+    try {renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});}
+    catch(e){qs('.scene-warning').hidden=false;host.hidden=true;return;}
+    renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;
+    renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;
+    host.prepend(renderer.domElement);
+    const scene=new THREE.Scene();
+    const camera=new THREE.PerspectiveCamera(43,1,.05,40);camera.up.set(0,0,1);
+    const target=new THREE.Vector3(0,0,2.5);
+    const material=(token,extra={})=>new THREE.MeshStandardMaterial({color:themeColor(token),roughness:.65,metalness:.06,...extra});
+    const torsoMat=material('--viz-series-1'),legMat=material('--viz-series-2'),comMat=material('--viz-series-3');
+    const skinMat=material('--muted-foreground'),seatMat=material('--foreground'),frameMat=material('--muted-foreground');
+    const groundMat=material('--muted',{transparent:true,opacity:.3,side:THREE.DoubleSide});
+    const mats=[[torsoMat,'--viz-series-1'],[legMat,'--viz-series-2'],[comMat,'--viz-series-3'],
+      [skinMat,'--muted-foreground'],[seatMat,'--foreground'],[frameMat,'--muted-foreground'],[groundMat,'--muted']];
+    const lights=[new THREE.HemisphereLight(themeColor('--foreground'),themeColor('--muted'),2),new THREE.DirectionalLight(themeColor('--foreground'),3.5)];
+    lights[1].position.set(-3,-4,8);lights[1].castShadow=true;
+    lights[1].shadow.mapSize.set(1024,1024);Object.assign(lights[1].shadow.camera,{left:-4,right:4,top:6,bottom:-2});
+    lights.forEach(x=>scene.add(x));
+    function updateTheme(){
+      mats.forEach(([m,t])=>m.color.copy(themeColor(t)));
+      const fg=themeColor('--foreground'),bg=themeColor('--background');
+      const light=fg.r+fg.g+fg.b>bg.r+bg.g+bg.b?fg:bg;
+      lights.forEach(x=>x.color.copy(light));lights[0].groundColor.copy(themeColor('--muted'));
+      gridMaterials.forEach(x=>x.color.copy(themeColor('--border')));guide.material.color.copy(themeColor('--border'));
+      slackLines.forEach(x=>x.material.color.copy(themeColor('--muted-foreground')));
+      renderer.setClearColor(bg,0);draw();
+    }
+    function sphere(parent,r,pos,mat){const mesh=new THREE.Mesh(new THREE.SphereGeometry(r,18,14),mat);mesh.position.set(...pos);mesh.castShadow=true;parent.add(mesh);return mesh;}
+    function segment(parent,a,b,r,mat){
+      const av=new THREE.Vector3(...a),bv=new THREE.Vector3(...b),delta=bv.clone().sub(av);
+      const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r,r,delta.length(),12),mat);
+      mesh.position.copy(av.add(bv).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());
+      mesh.castShadow=true;parent.add(mesh);return mesh;
+    }
+    const ground=new THREE.Mesh(new THREE.PlaneGeometry(8,5),groundMat);ground.receiveShadow=true;scene.add(ground);
+    const grid=new THREE.GridHelper(7,14);grid.rotation.x=Math.PI/2;grid.position.z=-.007;
+    const gridMaterials=Array.isArray(grid.material)?grid.material:[grid.material];
+    gridMaterials.forEach(x=>{x.transparent=true;x.opacity=.4;});scene.add(grid);
+    for(const y of [-.93,.93])for(const x of [-1.32,1.32])segment(scene,[x,y,0],[0,y,2.5],.036,frameMat);
+    segment(scene,[0,-1.12,2.5],[0,1.12,2.5],.043,frameMat);
+    const pivot=sphere(scene,.052,[0,0,2.5],seatMat);
+    const circle=[];for(let i=0;i<=128;i++){const a=i/128*Math.PI*2;circle.push(new THREE.Vector3(2.2*Math.sin(a),0,2.5-2.2*Math.cos(a)));}
+    const guide=new THREE.Line(new THREE.BufferGeometry().setFromPoints(circle),new THREE.LineBasicMaterial({color:themeColor('--border'),transparent:true,opacity:.35}));scene.add(guide);
+    const swing=new THREE.Group();swing.position.z=2.5;scene.add(swing);
+    const payload=new THREE.Group();swing.add(payload);
+    const support=[];for(const y of [-.24,.24])support.push(segment(swing,[0,y,0],[0,y,-2.2],.012,frameMat));
+    const seat=new THREE.Mesh(new THREE.BoxGeometry(.44,.6,.05),seatMat);seat.castShadow=true;payload.add(seat);
+    const p=cases['rod-ideal'].parameters,a=p.a_m,b=p.b_m,L1=p.torso_length_m,L3=p.shin_length_m;
+    for(const y of [-.12,.12]){segment(payload,[-a,y,0],[b,y,0],.062,legMat);sphere(payload,.065,[b,y,0],legMat);}
+    const upper=new THREE.Group();upper.position.x=-a;payload.add(upper);
+    segment(upper,[0,0,.035],[0,0,L1*.62],.115,torsoMat);sphere(upper,L1*.16,[0,0,L1*.84],skinMat);
+    segment(upper,[0,-.2,L1*.58],[0,.2,L1*.58],.04,torsoMat);
+    segment(payload,[0,-.31,.08],[0,.31,.08],.018,frameMat);
+    const arms=[-1,1].map(side=>({side,
+      upper:segment(scene,[0,0,0],[0,1,0],.038,torsoMat),
+      fore:segment(scene,[0,0,0],[0,1,0],.032,skinMat),
+      elbow:sphere(scene,.041,[0,0,0],skinMat),hand:sphere(scene,.035,[0,0,0],skinMat)}));
+    const armY=new THREE.Vector3(0,1,0), armDown=new THREE.Vector3(0,0,-1);
+    function rotateXZ(v,angle){const c=Math.cos(angle),s=Math.sin(angle);return new THREE.Vector3(c*v.x-s*v.z,v.y,s*v.x+c*v.z);}
+    function placeArmSegment(mesh,start,end){
+      const delta=end.clone().sub(start),length=delta.length();
+      mesh.position.copy(start).add(end).multiplyScalar(.5);
+      mesh.quaternion.setFromUnitVectors(armY,delta.divideScalar(length));mesh.scale.y=length;
+    }
+    function updateArms(theta,phi,r){
+      const pivot=new THREE.Vector3(0,0,cases[selected].parameters.pivot_height_m);
+      let maxError=0;const diagnostics=[];
+      for(const arm of arms){
+        const shoulderLocal=rotateXZ(new THREE.Vector3(0,0,L1*.58),phi).add(new THREE.Vector3(-a,arm.side*.2,-r));
+        const shoulder=rotateXZ(shoulderLocal,theta).add(pivot);
+        const hand=rotateXZ(new THREE.Vector3(0,arm.side*.24,-r+.08),theta).add(pivot);
+        const axis=hand.clone().sub(shoulder),d=axis.length();axis.divideScalar(d);
+        const along=(.32*.32-.34*.34+d*d)/(2*d);
+        const center=shoulder.clone().addScaledVector(axis,along),height=Math.sqrt(Math.max(0,.32*.32-along*along));
+        const low=armDown.clone().addScaledVector(axis,-armDown.dot(axis)).normalize();
+        const elbow=center.clone().addScaledVector(low,height);
+        placeArmSegment(arm.upper,shoulder,elbow);placeArmSegment(arm.fore,elbow,hand);
+        arm.elbow.position.copy(elbow);arm.hand.position.copy(hand);
+        maxError=Math.max(maxError,Math.abs(shoulder.distanceTo(elbow)-.32),Math.abs(hand.distanceTo(elbow)-.34));
+        diagnostics.push({shoulder:shoulder.toArray(),elbow:elbow.toArray(),hand:hand.toArray(),
+          angle:Math.acos(Math.max(-1,Math.min(1,(.32*.32+.34*.34-d*d)/(2*.32*.34))))*180/Math.PI});
+      }
+      root.dataset.armLengthError=String(maxError);root.armPoses=diagnostics;
+    }
+    const lower=new THREE.Group();lower.position.x=b;payload.add(lower);
+    for(const y of [-.12,.12]){segment(lower,[0,y,0],[0,y,-L3],.048,legMat);const shoe=new THREE.Mesh(new THREE.BoxGeometry(.17,.12,.055),seatMat);shoe.position.set(.055,y,-L3);lower.add(shoe);}
+    const com=sphere(scene,.047,[0,0,0],comMat);com.material.depthTest=false;com.renderOrder=3;
+    const slackLines=[];
+    for(const y of [-.24,.24]){const geom=new THREE.BufferGeometry();geom.setAttribute('position',new THREE.BufferAttribute(new Float32Array(33*3),3));const line=new THREE.Line(geom,new THREE.LineBasicMaterial({color:themeColor('--muted-foreground')}));line.userData.y=y;scene.add(line);slackLines.push(line);}
+    let trajectory=[];
+    function updateCamera(){camera.position.set(distance*Math.cos(elevation)*Math.sin(azimuth),-distance*Math.cos(elevation)*Math.cos(azimuth),target.z+distance*Math.sin(elevation));camera.lookAt(target);}
+    function at(t){
+      const rows=cases[selected].frames;let lo=0,hi=rows.length-1;
+      while(hi-lo>1){const mid=(lo+hi)>>1;if(rows[mid][0]<=t)lo=mid;else hi=mid;}
+      const left=rows[lo],right=rows[hi],f=Math.max(0,Math.min(1,(t-left[0])/(right[0]-left[0]||1)));
+      return left.map((v,i)=>i===0?t:v+(right[i]-v)*f);
+    }
+    function centerOfMass(theta,phi,psi,r){
+      const P=cases[selected].parameters;
+      function rotate(vec,angle){const c=Math.cos(angle),s=Math.sin(angle);return [c*vec[0]-s*vec[2],vec[1],s*vec[0]+c*vec[2]];}
+      const u=rotate([0,0,L1/2],phi),l=rotate([0,0,-L3/2],psi);
+      const parts=[[[0,0,-r],3],[[.5*(b-a),0,-r],P.thigh_mass_kg],[[-a+u[0],0,-r+u[2]],P.torso_mass_kg],[[b+l[0],0,-r+l[2]],P.shin_mass_kg]];
+      if(!P.rope)parts.push([[0,0,-1.1],1]);
+      let x=0,z=0,m=0;for(const [pos,w]of parts){x+=pos[0]*w;z+=pos[2]*w;m+=w;}
+      const rot=rotate([x/m,0,z/m],theta);return new THREE.Vector3(rot[0],0,2.5+rot[2]);
+    }
+    function draw(){
+      const f=at(time),th=f[1]*Math.PI/180,phi=f[2]*Math.PI/180,psi=f[3]*Math.PI/180,r=f[4],rope=cases[selected].parameters.rope;
+      swing.rotation.y=-th;payload.position.z=-r;upper.rotation.y=-phi;lower.rotation.y=-psi;
+      support.forEach(x=>{x.visible=!rope;x.scale.y=r/2.2;x.position.z=-r/2;});guide.visible=!rope;
+      let bend=0;
+      if(rope&&r<2.2){
+        let lo=0,hi=2.2;
+        for(let k=0;k<16;k++){
+          const mid=(lo+hi)/2;let arc=0,x0=0;
+          for(let i=1;i<=32;i++){const x=mid*Math.sin(Math.PI*i/32);arc+=Math.hypot(x-x0,r/32);x0=x;}
+          if(arc<2.2)lo=mid;else hi=mid;
+        }
+        bend=(lo+hi)/2;
+      }
+      for(const line of slackLines){
+        line.visible=rope;
+        if(rope){const arr=line.geometry.attributes.position;
+          for(let i=0;i<33;i++){const u=i/32,z=-r*u,x=bend*Math.sin(Math.PI*u),cx=Math.cos(th)*x-Math.sin(th)*z,cz=2.5+Math.sin(th)*x+Math.cos(th)*z;arr.setXYZ(i,cx,line.userData.y,cz);}arr.needsUpdate=true;line.geometry.computeBoundingSphere();}
+      }
+      updateArms(th,phi,r);com.position.copy(centerOfMass(th,phi,psi,r));updateCamera();renderer.render(scene,camera);
+      ui.clock.textContent=time.toFixed(2);ui.angle.textContent=f[1].toFixed(1);ui.v.textContent=f[5].toFixed(2);ui.time.value=time;
+      root.dataset.time=time.toFixed(4);root.dataset.angle=f[1].toFixed(4);root.dataset.case=selected;root.dataset.ready='true';
+      ui.play.textContent=playing?'일시정지':'재생';
+    }
+    let ownStateSignature='';
+    function signature(state){const s=state?.modelContent||{},v=state?.privateContent||{};return JSON.stringify([s.case,s.speed,s.time,v.azimuth,v.elevation,v.distance]);}
+    function saved(){
+      const snapshot={case:selected,speed:speed,time:Number(time.toFixed(2))};
+      const state={modelContent:snapshot,privateContent:{azimuth,elevation,distance}};ownStateSignature=signature(state);
+      if(window.openai?.setWidgetState)window.openai.setWidgetState(state).catch(()=>{});
+    }
+    function animate(stamp){
+      if(!playing){raf=0;return;}
+      time=Math.min(cases[selected].end,time+Math.min(.1,(stamp-lastStamp)/1000)*speed);lastStamp=stamp;
+      if(time>=cases[selected].end){playing=false;saved();}
+      draw();if(playing)raf=requestAnimationFrame(animate);else raf=0;
+    }
+    function stop(){playing=false;if(raf)cancelAnimationFrame(raf);raf=0;}
+    function setCase(name){
+      selected=cases[name]?name:'rod-ideal';ui.case.value=selected;ui.time.max=cases[selected].end;ui.end.textContent=cases[selected].end.toFixed(2);
+      time=Math.min(time,cases[selected].end);
+      ui.status.textContent=cases[selected].reached?`θ=180° 도달: ${cases[selected].end.toFixed(1)} s`:`120초간 미도달 · 최대 ${cases[selected].maximum.toFixed(1)}°`;
+    }
+    ui.play.addEventListener('click',()=>{if(playing)stop();else{if(time>=cases[selected].end)time=0;playing=true;lastStamp=performance.now();raf=requestAnimationFrame(animate);}draw();saved();});
+    ui.start.addEventListener('click',()=>{stop();time=0;draw();saved();});
+    ui.time.addEventListener('input',()=>{stop();time=Number(ui.time.value);draw();});ui.time.addEventListener('change',saved);
+    ui.case.addEventListener('change',()=>{stop();time=0;setCase(ui.case.value);draw();saved();});
+    ui.speed.addEventListener('change',()=>{speed=Number(ui.speed.value);saved();});
+    ui.view.addEventListener('click',()=>{const side=Math.abs(azimuth)<.02;azimuth=side?.28:0;elevation=side?.16:.02;ui.view.textContent=side?'측면 보기':'입체 보기';draw();saved();});
+    let drag=null;
+    host.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,a:azimuth,b:elevation};host.setPointerCapture(e.pointerId);});
+    host.addEventListener('pointermove',e=>{if(!drag)return;azimuth=drag.a-(e.clientX-drag.x)*.009;elevation=Math.max(-.3,Math.min(1.0,drag.b+(e.clientY-drag.y)*.008));draw();});
+    host.addEventListener('pointerup',()=>{drag=null;saved();});host.addEventListener('pointercancel',()=>drag=null);
+    host.addEventListener('wheel',e=>{e.preventDefault();distance=Math.max(4.6,Math.min(13,distance*Math.exp(e.deltaY*.001)));draw();},{passive:false});
+    function restore(state){const s=state?.modelContent||{},v=state?.privateContent||{};stop();time=Number.isFinite(s.time)?Math.max(0,s.time):0;setCase(s.case);speed=[.25,.5,1,2].includes(s.speed)?s.speed:1;ui.speed.value=speed;azimuth=Number.isFinite(v.azimuth)?v.azimuth:.28;elevation=Number.isFinite(v.elevation)?v.elevation:.16;distance=Number.isFinite(v.distance)?v.distance:8.7;draw();}
+    const observer=new ResizeObserver(()=>{const width=host.clientWidth,height=host.clientHeight;if(!width||!height)return;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();draw();});observer.observe(host);
+    new MutationObserver(updateTheme).observe(document.documentElement,{attributes:true,attributeFilter:['class','style','data-theme']});
+    const appearance=matchMedia('(prefers-color-scheme: dark)');appearance.addEventListener('change',updateTheme);
+    window.addEventListener('openai:set_globals',e=>{const state=e.detail?.globals?.widgetState;if(state&&signature(state)!==ownStateSignature)restore(state);updateTheme();});
+    window.addEventListener('pagehide',stop);document.addEventListener('visibilitychange',()=>{if(document.hidden){stop();draw();}});
+    setCase(selected);restore(window.openai?.widgetState);updateTheme();
+  })();
+  </script>
+</div>

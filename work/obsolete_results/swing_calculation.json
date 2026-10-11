@@ -1,0 +1,244 @@
+{
+  "mass_kg": 70.0,
+  "long_length_m": 2.0,
+  "short_length_m": 1.8,
+  "initial_angle_deg": 20.0,
+  "change_duration_s": 0.1,
+  "step_s": 0.0002,
+  "pumping_time_s": 18.114528879268377,
+  "first_rotation_time_s": 1.7657410879079798,
+  "total_time_s": 19.880269967176357,
+  "contractions": 12,
+  "extensions": 11,
+  "max_radial_force_N": 11296.946772394862,
+  "min_radial_force_N": -11296.946772394862,
+  "max_outward_radial_force_N": 8638.038458892392,
+  "max_abs_power_W": 28261.721256513032,
+  "max_radial_speed_m_s": 3.7499999999999987,
+  "max_radial_acceleration_m_s2": 115.46910720000463,
+  "max_tangential_speed_m_s": 9.342810739478248,
+  "max_total_speed_m_s": 9.622496260168374,
+  "max_abs_omega_rad_s": 5.190450410821248,
+  "peak_energy_residual_J": 0.0052557766553036345,
+  "final_energy_J": 3192.423937979853,
+  "net_work_J": 3109.5977832961935,
+  "top_speed_m_s": 4.081190085466502,
+  "events": [
+    {
+      "time_s": 0.7146909461228677,
+      "kind": "shorten",
+      "angle_deg": -1.086039842318193e-13,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 1.4043938319100884,
+      "kind": "peak",
+      "angle_deg": 23.421368007211292
+    },
+    {
+      "time_s": 1.4043938319100884,
+      "kind": "lengthen",
+      "angle_deg": 23.421368007211292,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 2.126023473918077,
+      "kind": "shorten",
+      "angle_deg": 3.692813451815441e-14,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 2.818371480730306,
+      "kind": "peak",
+      "angle_deg": -27.393039351403647
+    },
+    {
+      "time_s": 2.818371480730306,
+      "kind": "lengthen",
+      "angle_deg": -27.393039351403647,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 3.5427807241298384,
+      "kind": "shorten",
+      "angle_deg": -1.5074720732664465e-13,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 4.238805393235308,
+      "kind": "peak",
+      "angle_deg": 32.070466257818836
+    },
+    {
+      "time_s": 4.238805393235308,
+      "kind": "lengthen",
+      "angle_deg": 32.070466257818836,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 4.967078397744998,
+      "kind": "shorten",
+      "angle_deg": 1.1536732194557595e-13,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 5.668256291127089,
+      "kind": "peak",
+      "angle_deg": -37.59973752371108
+    },
+    {
+      "time_s": 5.668256291127089,
+      "kind": "lengthen",
+      "angle_deg": -37.59973752371108,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 6.401945092358069,
+      "kind": "shorten",
+      "angle_deg": -1.1021212113252998e-13,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 7.110432566146223,
+      "kind": "peak",
+      "angle_deg": 44.17124305703448
+    },
+    {
+      "time_s": 7.110432566146223,
+      "kind": "lengthen",
+      "angle_deg": 44.17124305703448,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 7.851804043931044,
+      "kind": "shorten",
+      "angle_deg": -2.2410486462593327e-13,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 8.570842948040003,
+      "kind": "peak",
+      "angle_deg": -52.04334586312484
+    },
+    {
+      "time_s": 8.570842948040003,
+      "kind": "lengthen",
+      "angle_deg": -52.04334586312484,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 9.323305718457402,
+      "kind": "shorten",
+      "angle_deg": 2.673568363818413e-13,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 10.057985060951063,
+      "kind": "peak",
+      "angle_deg": 61.5870802966508
+    },
+    {
+      "time_s": 10.057985060951063,
+      "kind": "lengthen",
+      "angle_deg": 61.5870802966508,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 10.826891173369921,
+      "kind": "shorten",
+      "angle_deg": -1.246022674598937e-13,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 11.585755346958035,
+      "kind": "peak",
+      "angle_deg": -73.38084196377525
+    },
+    {
+      "time_s": 11.585755346958035,
+      "kind": "lengthen",
+      "angle_deg": -73.38084196377525,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 12.380093582899363,
+      "kind": "shorten",
+      "angle_deg": 4.15463061276603e-13,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 13.179201912416627,
+      "kind": "peak",
+      "angle_deg": 88.44809547293865
+    },
+    {
+      "time_s": 13.179201912416627,
+      "kind": "lengthen",
+      "angle_deg": 88.44809547293865,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 14.0158734467069,
+      "kind": "shorten",
+      "angle_deg": 1.053667448599879e-13,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 14.892806571970617,
+      "kind": "peak",
+      "angle_deg": -109.05323569416501
+    },
+    {
+      "time_s": 14.892806571970617,
+      "kind": "lengthen",
+      "angle_deg": -109.05323569416501,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 15.811381478983801,
+      "kind": "shorten",
+      "angle_deg": -4.540987250292638e-15,
+      "before_m": 2.0,
+      "after_m": 1.8
+    },
+    {
+      "time_s": 16.935555645937686,
+      "kind": "peak",
+      "angle_deg": 144.07190106439822
+    },
+    {
+      "time_s": 16.935555645937686,
+      "kind": "lengthen",
+      "angle_deg": 144.07190106439822,
+      "before_m": 1.8,
+      "after_m": 2.0
+    },
+    {
+      "time_s": 18.114528879268377,
+      "kind": "shorten",
+      "angle_deg": 3.42574314489587e-13,
+      "before_m": 2.0,
+      "after_m": 1.8
+    }
+  ]
+}
